@@ -8,4 +8,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface ApiComment {
     String value() default "No Comment";
+    String type() default "String";
+    String pattern() default "";
 }

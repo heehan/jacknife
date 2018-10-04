@@ -82,5 +82,36 @@ public class StringUtils {
         return Base64.getEncoder().encodeToString(sha256Data);
     }
 
+    /**
+     * 배열을 합친다.
+     * @param array : 합칠 배열
+     * @return
+     */
+    public static <T> String join(T[] array)
+    {
+        return join(array, "," );
+    }
+
+    /**
+     * 배열을 합친다.
+     * @param array : 합칠 배열.
+     * @param delim : 구분자
+     * @return
+     */
+    public static <T> String join(T[] array, String delim)
+    {
+        if (array == null || array.length <= 0)
+            return "";
+        StringBuilder builder = new StringBuilder();
+
+        for(T t : array)
+        {
+            builder.append(t.toString()).append(delim);
+        }
+
+        return builder.substring(0, builder.length() - 1);
+
+    }
+
 
 }

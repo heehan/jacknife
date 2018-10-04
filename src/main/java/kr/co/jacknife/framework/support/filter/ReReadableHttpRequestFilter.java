@@ -3,6 +3,7 @@ package kr.co.jacknife.framework.support.filter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.TeeInputStream;
+import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -12,6 +13,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,12 +24,18 @@ public class ReReadableHttpRequestFilter  extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String accept = request.getHeader("accept");
-        if (accept != null && ( accept.contains("application/json") || accept.contains("application/xml")  ) )
+//        if (accept != null && ( accept.contains("application/json") || accept.contains("application/xml")  ) )
             filterChain.doFilter(new RequestWrapper(request), response );
-        else
-            filterChain.doFilter(request,response);
+//        else
+//            filterChain.doFilter(request,response);
     }
 
+    public class ResponseWrapper extends HttpServletResponseWrapper
+    {
+        public ResponseWrapper(HttpServletResponse response) {
+            super(response);
+        }
+    }
 
     public class RequestWrapper extends HttpServletRequestWrapper {
         private byte[] bytes;
@@ -41,7 +49,14 @@ public class ReReadableHttpRequestFilter  extends OncePerRequestFilter {
             super(request);
             InputStream in = super.getInputStream();
             bytes = IOUtils.toByteArray(in);
-            requestBody = new String(bytes);
+            if (request.getContentType() == null
+                    || request.getContentType().indexOf(MediaType.MULTIPART_FORM_DATA_VALUE) < 0)
+            {
+                requestBody = new String(bytes);
+            }
+            else {
+                requestBody = "---- MULTIPART ----";
+            }
         }
         @Override
         public ServletInputStream getInputStream() throws IOException {

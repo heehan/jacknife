@@ -25,7 +25,9 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
         if (request.getContentType() == null) {
             return false;
         }
-        return request.getContentType().startsWith("image") || request.getContentType().startsWith("video") || request.getContentType().startsWith("audio");
+        return request.getContentType().startsWith("image")
+            || request.getContentType().startsWith("video")
+            || request.getContentType().startsWith("audio");
     }
 
     private boolean isMultipart(final HttpServletRequest request) {
@@ -90,17 +92,7 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
                 if (request instanceof ReReadableHttpRequestFilter.RequestWrapper  && !isMultipart(request) && !isBinaryContent(request))
                 {
                     ReReadableHttpRequestFilter.RequestWrapper rw = (ReReadableHttpRequestFilter.RequestWrapper)request;
-
-                    String bodyString = "";
-                    if (rw.toByteArray().length == 0) {
-                        byte[] buf = new byte[rw.getContentLength()];
-                        rw.getInputStream().read(buf, 0, rw.getContentLength());
-                        bodyString = new String(buf, "UTF-8");
-                    } else {
-                        bodyString = new String(rw.toByteArray(), "UTF-8");
-                    }
-
-                    logger.info("## REQUEST BODY -\n{}", bodyString);
+                    logger.info("## REQUEST BODY -\n{}", rw.getRequestBody());
                 }
             }
         }

@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
@@ -77,16 +78,20 @@ public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolv
             if (dtf == null) throw new MethodArgumentNotValidException(parameter, new BindException(result,paramName));
             if (!isEmpty(result))
             {
-                System.out.println("result ->>>>>>." + result.toString());
-                result = LocalDateTime.parse(result.toString(),DateTimeFormatter.ofPattern(dtf.pattern()));
+                try {
+                    result = LocalDateTime.parse(result.toString(),DateTimeFormatter.ofPattern(dtf.pattern()));
+                } catch (Exception e) {
+                    LocalDate _tmpLocalDate = LocalDate.parse(result.toString(),DateTimeFormatter.ofPattern(dtf.pattern()));
+                    LocalTime _tmpLocalTime = LocalTime.of(0,0,0,0);
+                    result = LocalDateTime.of(_tmpLocalDate,_tmpLocalTime);
+                    return result;
+                }
             }
         }
         else if (clazz.equals(LocalDate.class))
         {
             if (dtf == null) throw new MethodArgumentNotValidException(parameter, new BindException(result,paramName));
-            if (!isEmpty(result))
-            {
-                System.out.println("result ->>>>>>." + result.toString());
+            if (!isEmpty(result)) {
                 result = LocalDate.parse(result.toString(),DateTimeFormatter.ofPattern(dtf.pattern()));
             }
         }

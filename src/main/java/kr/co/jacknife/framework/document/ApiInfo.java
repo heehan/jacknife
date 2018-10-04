@@ -14,10 +14,11 @@ public class ApiInfo implements Comparable<ApiInfo>{
     private String url;
     private String method;
     private String comment;
+
     private List<RestApiParam> pathParamList;
     private List<RestApiParam> queryParamList;
-    private Class reqBodyType;
-    private Class returnType;
+    private List<ApiFieldInfo> requestBodyPropList;
+    private List<ApiFieldInfo> responseBodyPropList;
 
     private ResponseSuccessCodes successCodes;
     private ResponseErrorCodes errorCodes;
@@ -26,6 +27,8 @@ public class ApiInfo implements Comparable<ApiInfo>{
     {
         this.pathParamList = new ArrayList<>();
         this.queryParamList = new ArrayList<>();
+        this.requestBodyPropList = new ArrayList<>();
+        this.responseBodyPropList = new ArrayList<>();
     }
 
     public String getCode() {
@@ -92,14 +95,6 @@ public class ApiInfo implements Comparable<ApiInfo>{
         return this;
     }
 
-    public Class getReqBodyType() {
-        return reqBodyType;
-    }
-
-    public ApiInfo setReqBodyType(Class reqBodyType) {
-        this.reqBodyType = reqBodyType;
-        return this;
-    }
 
     public ResponseSuccessCodes getSuccessCodes() {
         return successCodes;
@@ -118,13 +113,21 @@ public class ApiInfo implements Comparable<ApiInfo>{
         this.errorCodes = errorCodes;
         return this;
     }
-    public Class getReturnType() {
-        return returnType;
+
+    public List<ApiFieldInfo> getRequestBodyPropList() {
+        return requestBodyPropList;
     }
 
-    public ApiInfo setReturnType(Class returnType) {
-        this.returnType = returnType;
-        return this;
+    public void setRequestBodyPropList(List<ApiFieldInfo> requestBodyPropList) {
+        this.requestBodyPropList = requestBodyPropList;
+    }
+
+    public List<ApiFieldInfo> getResponseBodyPropList() {
+        return responseBodyPropList;
+    }
+
+    public void setResponseBodyPropList(List<ApiFieldInfo> responseBodyPropList) {
+        this.responseBodyPropList = responseBodyPropList;
     }
 
     @Override
