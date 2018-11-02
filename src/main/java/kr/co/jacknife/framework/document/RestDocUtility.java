@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import kr.co.jacknife.framework.document.annotation.*;
 import kr.co.jacknife.utils.ExcelUtil;
 import kr.co.jacknife.utils.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.util.ReflectionUtils;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.*;
@@ -351,7 +353,8 @@ public class RestDocUtility {
                     , new ExcelUtil.ColumnData("status", HorizontalAlignment.LEFT).setEmphasized(true)
                     , new ExcelUtil.ColumnData("Comment", HorizontalAlignment.LEFT).setEmphasized(true));
             for (ResponseCode resCode : apiInfo.getSuccessCodes().rescodes()) {
-                dataHandler.addRowData( new ExcelUtil.ColumnData(resCode.httpStatus().value() + "", HorizontalAlignment.LEFT)
+                dataHandler.addRowData(
+                          new ExcelUtil.ColumnData(resCode.httpStatus().value() + "", HorizontalAlignment.LEFT)
                         , new ExcelUtil.ColumnData(resCode.status() + "", HorizontalAlignment.LEFT)
                         , new ExcelUtil.ColumnData(resCode.comment(), HorizontalAlignment.LEFT));
             }
@@ -367,6 +370,71 @@ public class RestDocUtility {
                                       , new ExcelUtil.ColumnData(resCode.status() + "", HorizontalAlignment.LEFT)
                                       , new ExcelUtil.ColumnData(resCode.comment(), HorizontalAlignment.LEFT));
             }
+
+            dataHandler.addRowData(new ExcelUtil.ColumnData(""));
+            dataHandler.addRowData(new ExcelUtil.ColumnData(""));
+            for (ResponseCode resCode : apiInfo.getSuccessCodes().rescodes())
+            {
+                dataHandler.addRowData(new ExcelUtil.ColumnData(resCode.status() + "샘플").setEmphasized(true));
+                if (!"".equals(resCode.curlSamplePath())) {
+                    try {
+                        String _tmp = new String(IOUtils.toByteArray(RestDocUtility.class.getClassLoader().getResourceAsStream(resCode.curlSamplePath())));
+                        dataHandler.addRowData( new ExcelUtil.ColumnData("curl" , HorizontalAlignment.LEFT).setEmphasized(true)
+                                , new ExcelUtil.ColumnData(_tmp , HorizontalAlignment.LEFT)
+                        );
+                    } catch (Exception e) {}
+                }
+                //if (reqSampleFile.exists()) {
+                if (!"".equals(resCode.reqSamplePath())) {
+                    try {
+                        String _tmp = new String(IOUtils.toByteArray(RestDocUtility.class.getClassLoader().getResourceAsStream(resCode.reqSamplePath())));
+                        dataHandler.addRowData(new ExcelUtil.ColumnData("req", HorizontalAlignment.LEFT).setEmphasized(true)
+                                , new ExcelUtil.ColumnData(_tmp, HorizontalAlignment.LEFT)
+                        );
+                    } catch (Exception e) {}
+                }
+                if (!"".equals(resCode.resSamplePath())) {
+                    try {
+                        String _tmp = new String(IOUtils.toByteArray(RestDocUtility.class.getClassLoader().getResourceAsStream(resCode.resSamplePath())));
+                        dataHandler.addRowData( new ExcelUtil.ColumnData("res" , HorizontalAlignment.LEFT).setEmphasized(true)
+                                , new ExcelUtil.ColumnData(_tmp , HorizontalAlignment.LEFT)
+                        );
+                    } catch (Exception e) {}
+                }
+            }
+
+            dataHandler.addRowData(new ExcelUtil.ColumnData(""));
+            dataHandler.addRowData(new ExcelUtil.ColumnData(""));
+            for (ResponseCode resCode : apiInfo.getErrorCodes().rescodes())  //.getSuccessCodes().rescodes())
+            {
+                dataHandler.addRowData(new ExcelUtil.ColumnData(resCode.status() + "샘플").setEmphasized(true));
+                if (!"".equals(resCode.curlSamplePath())) {
+                    try {
+                        String _tmp = new String(IOUtils.toByteArray(RestDocUtility.class.getClassLoader().getResourceAsStream(resCode.curlSamplePath())));
+                        dataHandler.addRowData( new ExcelUtil.ColumnData("curl" , HorizontalAlignment.LEFT).setEmphasized(true)
+                                , new ExcelUtil.ColumnData(_tmp , HorizontalAlignment.LEFT)
+                        );
+                    } catch (Exception e) {}
+                }
+                //if (reqSampleFile.exists()) {
+                if (!"".equals(resCode.reqSamplePath())) {
+                    try {
+                        String _tmp = new String(IOUtils.toByteArray(RestDocUtility.class.getClassLoader().getResourceAsStream(resCode.reqSamplePath())));
+                        dataHandler.addRowData(new ExcelUtil.ColumnData("req", HorizontalAlignment.LEFT).setEmphasized(true)
+                                , new ExcelUtil.ColumnData(_tmp, HorizontalAlignment.LEFT)
+                        );
+                    } catch (Exception e) {}
+                }
+                if (!"".equals(resCode.resSamplePath())) {
+                    try {
+                        String _tmp = new String(IOUtils.toByteArray(RestDocUtility.class.getClassLoader().getResourceAsStream(resCode.resSamplePath())));
+                        dataHandler.addRowData( new ExcelUtil.ColumnData("res" , HorizontalAlignment.LEFT).setEmphasized(true)
+                                , new ExcelUtil.ColumnData(_tmp , HorizontalAlignment.LEFT)
+                        );
+                    } catch (Exception e) {}
+                }
+            }
+
         }
 
         File file = new File(destPath);

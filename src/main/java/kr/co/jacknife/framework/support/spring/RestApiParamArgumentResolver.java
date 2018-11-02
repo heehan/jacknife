@@ -1,10 +1,5 @@
 package kr.co.jacknife.framework.support.spring;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.co.jacknife.framework.document.annotation.OptionalYN;
-import kr.co.jacknife.framework.document.annotation.ParamType;
-import kr.co.jacknife.framework.document.annotation.RestApiParam;
-import kr.co.jacknife.framework.support.filter.ReReadableHttpRequestFilter;
 import org.springframework.core.MethodParameter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindException;
@@ -23,7 +18,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import kr.co.jacknife.framework.document.annotation.OptionalYN;
+import kr.co.jacknife.framework.document.annotation.ParamType;
+import kr.co.jacknife.framework.document.annotation.RestApiParam;
+import kr.co.jacknife.framework.support.filter.ReReadableHttpRequestFilter;
 
 public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
@@ -32,7 +37,14 @@ public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolv
     }
 
     private boolean isEmpty(Object obj) {
-        return obj == null || obj.toString().equals("") ;
+        if (obj == null || obj.toString().equals(""))
+            return true;
+
+        if ( obj.getClass().isAssignableFrom(Collection.class) ) {
+            return ((Collection)obj).isEmpty();
+        } else {
+            return false;
+        }
     }
 
     private Object getRowValue(MethodParameter parameter, ReReadableHttpRequestFilter.RequestWrapper  request)
@@ -116,11 +128,18 @@ public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolv
                         throw new MethodArgumentNotValidException(parameter, new BindException(result,paramName));
                     }
                 }
+                else if ( parameter.getParameterType().isAssignableFrom(Collection.class))
+                {
+                    return result;
+                }
                 else
                 {
+                    if ( Collection.class.isAssignableFrom( result.getClass() ) ) {
+                        result = ((Collection) result).isEmpty() ? null :   ((Collection) result).toArray()[0];
+                    }
                     try {
                         Constructor c = clazz.getConstructor(String.class);
-                        if (c != null)
+                        if (c != null && result != null)
                             result = c.newInstance(result);
                     } catch (NoSuchMethodException nsme) { }
                 }
@@ -128,7 +147,7 @@ public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolv
         }
 
         if (optionYN == OptionalYN.N && result == null)
-            throw new MethodArgumentNotValidException(parameter, new BindException(result,paramName));
+            throw new MethodArgumentNotValidException(parameter, new BindException(parameter,paramName));
 
         return result;
     }
@@ -148,6 +167,7 @@ public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolv
         {
             case PATH:
             case QUERY:
+            case HEADER:
                     result = toTargetType(parameter, request);
                 break;
             case BODY:

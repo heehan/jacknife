@@ -1,23 +1,28 @@
 package kr.co.jacknife.framework.support.logging;
 
-import kr.co.jacknife.framework.document.annotation.OptionalYN;
-import kr.co.jacknife.framework.document.annotation.ParamType;
-import kr.co.jacknife.framework.document.annotation.RestApi;
-import kr.co.jacknife.framework.document.annotation.RestApiParam;
-import kr.co.jacknife.framework.support.filter.ReReadableHttpRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import kr.co.jacknife.framework.document.annotation.OptionalYN;
+import kr.co.jacknife.framework.document.annotation.ParamType;
+import kr.co.jacknife.framework.document.annotation.RestApi;
+import kr.co.jacknife.framework.document.annotation.RestApiParam;
+import kr.co.jacknife.framework.support.filter.ReReadableHttpRequestFilter;
 
 public class ApiLoggingInterceptor implements HandlerInterceptor {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -67,7 +72,8 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
                         while(values.hasMoreElements()) {
                             builder.append(values.nextElement()).append(",");
                         }
-                        logger.debug("# RequestHeader : Name -> {}, Values ->{}", headerName, builder.substring(0, builder.length() - 1));
+                        logger.debug("# RequestHeader : Name -> {}, Values ->{}", headerName,
+                                builder.length() <= 0 ? "" : builder.substring(0, builder.length() - 1));
                     }
                 } else {
                     Enumeration<String> values = request.getHeaders("Accept");
@@ -75,7 +81,8 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
                     while(values.hasMoreElements()) {
                         builder.append(values.nextElement()).append(",");
                     }
-                    logger.debug("# Accept Header : Values ->{}",  builder.substring(0, builder.length() - 1));
+                    logger.debug("# Accept Header : Values ->{}",
+                            builder.length() <= 0 ? "" : builder.substring(0, builder.length() - 1));
                 }
 
                 logger.info("## API PathVariables ");
