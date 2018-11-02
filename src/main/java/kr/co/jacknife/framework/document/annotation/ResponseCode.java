@@ -14,4 +14,6 @@ public @interface ResponseCode {
     HttpStatus httpStatus() default HttpStatus.OK;
     String     status()     default "";
     String     comment()    default "";
+    String     exPath() default "";
+    String     exData() default "";
 }

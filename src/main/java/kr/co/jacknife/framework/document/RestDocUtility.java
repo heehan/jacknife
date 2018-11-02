@@ -62,11 +62,16 @@ public class RestDocUtility {
                 || field.getAnnotation(JsonIgnoreProperties.class) != null;
     }
 
+    public static boolean isArrayType(String type) {
+        return type.indexOf("[]") >= 0;
+    }
     public static boolean isCollectionType(Class field)
     {
-        return field.getName().endsWith("java.util.List")
+        return     field.getName().endsWith("[]")
+                || field.getName().endsWith("java.util.List")
                 || field.getName().endsWith("java.util.Set")
                 || field.getName().endsWith("java.util.Collection");
+
     }
 
     public static boolean isWrappedOptionalType (Class field)
@@ -131,6 +136,7 @@ public class RestDocUtility {
     }
 
     public static List<Field> findAllField(Class clazz) {
+        System.out.println("#### -->>> " + clazz.getName());
         List<Field> fields = new ArrayList<>();
         while(true) {
             for (Field field : clazz.getDeclaredFields()) {
@@ -238,6 +244,24 @@ public class RestDocUtility {
             dataHandler.addRowData(new ExcelUtil.ColumnData("Comment", HorizontalAlignment.LEFT).setSize(10).setEmphasized(true)
                                  , new ExcelUtil.ColumnData(apiInfo.getComment(), HorizontalAlignment.LEFT).setSize(40));
 
+            if (!apiInfo.getHeaderParamList().isEmpty()) {
+                dataHandler.addRowData(new ExcelUtil.ColumnData(""));
+                dataHandler.addRowData(new ExcelUtil.ColumnData("Request Header Structure", HorizontalAlignment.LEFT).setSize(20).setEmphasized(true));
+                dataHandler.addRowData(new ExcelUtil.ColumnData("Header Variable", HorizontalAlignment.LEFT).setSize(20).setEmphasized(true)
+                        ,new ExcelUtil.ColumnData("Name", HorizontalAlignment.LEFT).setSize(20).setEmphasized(true)
+                        ,new ExcelUtil.ColumnData("Type", HorizontalAlignment.LEFT).setSize(10).setEmphasized(true)
+                        ,new ExcelUtil.ColumnData("OptionalYN", HorizontalAlignment.LEFT).setSize(10).setEmphasized(true)
+                        ,new ExcelUtil.ColumnData("Comment", HorizontalAlignment.LEFT).setSize(40).setEmphasized(true));
+
+                for (RestApiParam param : apiInfo.getHeaderParamList())
+                {
+                    dataHandler.addRowData(new ExcelUtil.ColumnData("")
+                            , new ExcelUtil.ColumnData(param.name(), HorizontalAlignment.LEFT)
+                            , new ExcelUtil.ColumnData(param.valueType(), HorizontalAlignment.LEFT)
+                            , new ExcelUtil.ColumnData(param.optional() == OptionalYN.Y ? "Y" : "", HorizontalAlignment.LEFT)
+                            , new ExcelUtil.ColumnData(param.desc(), HorizontalAlignment.LEFT));
+                }
+            }
             if (!apiInfo.getPathParamList().isEmpty()) {
                 dataHandler.addRowData(new ExcelUtil.ColumnData(""));
                 dataHandler.addRowData(new ExcelUtil.ColumnData("Request Structure", HorizontalAlignment.LEFT).setSize(20).setEmphasized(true));
@@ -376,6 +400,13 @@ public class RestDocUtility {
                 if (desc != null) apiInfo.setComment(desc.value());
 
                 Parameter[] parameters = m.getParameters();
+
+                for (Parameter p : parameters) {
+                    RestApiParam pap = p.getAnnotation(RestApiParam.class);
+                    if (pap != null && pap.type() == ParamType.HEADER)
+                        apiInfo.getHeaderParamList().add(pap);
+                }
+
                 for (Parameter p : parameters) {
                     RestApiParam pap = p.getAnnotation(RestApiParam.class);
                     if (pap != null && pap.type() == ParamType.PATH)
@@ -409,13 +440,16 @@ public class RestDocUtility {
 
                         int stepCount = 0;
                         for (String type : types) {
+                            if (RestDocUtility.isArrayType(type)) {
+                                apiFieldInfos.get(apiFieldInfos.size()-1).setFieldType("[]");
+                                continue;
+                            }
                             Class _clazz = Class.forName(type);
                             if (RestDocUtility.isCollectionType(_clazz))
                             {
                                 apiFieldInfos.get(apiFieldInfos.size()-1).setFieldType("[]");
                                 continue;
                             }
-
                             RestDocUtility.readClassPropertyInfo(++stepCount, _clazz, apiFieldInfos);
                         }
                     }

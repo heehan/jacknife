@@ -15,6 +15,7 @@ public class ApiInfo implements Comparable<ApiInfo>{
     private String method;
     private String comment;
 
+    private List<RestApiParam> headerParamList;
     private List<RestApiParam> pathParamList;
     private List<RestApiParam> queryParamList;
     private List<ApiFieldInfo> requestBodyPropList;
@@ -25,6 +26,7 @@ public class ApiInfo implements Comparable<ApiInfo>{
 
     public ApiInfo()
     {
+        this.headerParamList = new ArrayList<>();
         this.pathParamList = new ArrayList<>();
         this.queryParamList = new ArrayList<>();
         this.requestBodyPropList = new ArrayList<>();
@@ -128,6 +130,14 @@ public class ApiInfo implements Comparable<ApiInfo>{
 
     public void setResponseBodyPropList(List<ApiFieldInfo> responseBodyPropList) {
         this.responseBodyPropList = responseBodyPropList;
+    }
+
+    public List<RestApiParam> getHeaderParamList() {
+        return headerParamList;
+    }
+
+    public void setHeaderParamList(List<RestApiParam> headerParamList) {
+        this.headerParamList = headerParamList;
     }
 
     @Override

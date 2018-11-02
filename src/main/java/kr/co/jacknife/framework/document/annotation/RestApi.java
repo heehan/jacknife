@@ -1,6 +1,7 @@
 package kr.co.jacknife.framework.document.annotation;
 
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -16,6 +17,7 @@ public @interface RestApi {
     String group() default "no group";
     String apiName() default "no apiName";
     String apiCode() default "no apiCode";
+    String contentType() default "application/json";
 
     @AliasFor(annotation = RequestMapping.class)
     String name() default "";

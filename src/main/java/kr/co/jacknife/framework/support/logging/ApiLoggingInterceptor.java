@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 import java.util.Map;
 
 public class ApiLoggingInterceptor implements HandlerInterceptor {
@@ -56,6 +57,27 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
                 logger.info("# RequestMethod : {}", request.getMethod());
                 logger.info("# Request URI   : {}", request.getRequestURI() );
 
+                if (logger.isDebugEnabled()) {
+                    logger.debug("# RequestHeaders ...........");
+                    Enumeration<String> headerNames = request.getHeaderNames();
+                    while(headerNames.hasMoreElements()) {
+                        String headerName = headerNames.nextElement();
+                        Enumeration<String> values = request.getHeaders(headerName);
+                        StringBuilder builder = new StringBuilder();
+                        while(values.hasMoreElements()) {
+                            builder.append(values.nextElement()).append(",");
+                        }
+                        logger.debug("# RequestHeader : Name -> {}, Values ->{}", headerName, builder.substring(0, builder.length() - 1));
+                    }
+                } else {
+                    Enumeration<String> values = request.getHeaders("Accept");
+                    StringBuilder builder = new StringBuilder();
+                    while(values.hasMoreElements()) {
+                        builder.append(values.nextElement()).append(",");
+                    }
+                    logger.debug("# Accept Header : Values ->{}",  builder.substring(0, builder.length() - 1));
+                }
+
                 logger.info("## API PathVariables ");
                 Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
                 for (MethodParameter mp : hm.getMethodParameters())
@@ -89,7 +111,8 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
                     }
                 }
 
-                if (request instanceof ReReadableHttpRequestFilter.RequestWrapper  && !isMultipart(request) && !isBinaryContent(request))
+                if (request instanceof ReReadableHttpRequestFilter.RequestWrapper  && !isMultipart(request) && !isBinaryContent(request)
+                        && !request.getMethod().equalsIgnoreCase("get") )
                 {
                     ReReadableHttpRequestFilter.RequestWrapper rw = (ReReadableHttpRequestFilter.RequestWrapper)request;
                     logger.info("## REQUEST BODY -\n{}", rw.getRequestBody());
@@ -103,28 +126,26 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod hm = (HandlerMethod) handler;
-
-            if (hm.hasMethodAnnotation(RestApi.class))
-            {
-                logger.info("handlerClass -=> {} ", handler == null ? " NULL " :  handler.getClass());
-                logger.info("view class   -=> {} ", modelAndView == null ? " ModelAndView is NULL " :
-                        modelAndView.getView() == null ? " View is NULL " :
-                                modelAndView.getView().getClass());
-            }
-        }
+//        if (handler instanceof HandlerMethod) {
+//            HandlerMethod hm = (HandlerMethod) handler;
+//
+////            if (hm.hasMethodAnnotation(RestApi.class))
+////            {
+////                logger.info("handlerClass -=> {} ", handler == null ? " NULL " :  handler.getClass());
+////                logger.info("view class   -=> {} ", modelAndView == null ? " ModelAndView is NULL " : modelAndView.getView() == null ? " View is NULL " : modelAndView.getView().getClass());
+////            }
+//        }
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod hm = (HandlerMethod) handler;
-            if (hm.hasMethodAnnotation(RestApi.class)) {
-                logger.info("hanlderClass -=> {} ", handler == null ? " Handler is NULL " : handler.getClass());
-                logger.info("ex Class     -=> {} ", ex == null ? "ex is NULL " : ex.getClass());
-            }
-        }
+//        if (handler instanceof HandlerMethod) {
+//            HandlerMethod hm = (HandlerMethod) handler;
+//            if (hm.hasMethodAnnotation(RestApi.class)) {
+//                logger.info("hanlderClass -=> {} ", handler == null ? " Handler is NULL " : handler.getClass());
+//                logger.info("ex Class     -=> {} ", ex == null ? "ex is NULL " : ex.getClass());
+//            }
+//        }
     }
 }
 

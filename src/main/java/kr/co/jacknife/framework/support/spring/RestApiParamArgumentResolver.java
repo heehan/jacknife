@@ -23,8 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
@@ -50,6 +49,15 @@ public class RestApiParamArgumentResolver implements HandlerMethodArgumentResolv
         {
             String reqVal = request.getParameter(paramName);
             return isEmpty(reqVal) ? null : reqVal;
+        }
+        else if (paramType == ParamType.HEADER)
+        {
+            List<String> headerValues = new ArrayList<>();
+            Enumeration<String> enume = request.getHeaders(paramName);
+            while(enume.hasMoreElements()) {
+                headerValues.add(enume.nextElement());
+            }
+            return headerValues;
         }
         return null;
     }
