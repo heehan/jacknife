@@ -120,33 +120,7 @@ public class ExcelUtil
     }
     
     
-    /**
-<pre>
-
-    public static class LoggingExcelReaderCallback implements ExcelReaderCallback 
-    {
-        @Override
-        public void callback(List<Map<String, String>> rows)
-        {
-            System.out.println("rowsCount ->" + rows.size());
-        }
-    }
-
-            ExcelUtil.newExcelReader().setInputStream(is) // 엑셀파일 데이터를 읽을  inputStream  설정.. 
-                       .setWorksheet("SHEET_1") // 시트명 입력..
-                       .setCursor("B", 3) // cursor 설정. 
-                       .setHeaders(
-                               new ColumnHeader("관리번호", "STRING"),  // 읽을 헤더정보.
-                               new ColumnHeader("법인명", "STRING"), 
-                               new ColumnHeader("별명", "STRING") )
-                       .checkHeader() // 스트림으로부터 읽어들인 데이터 헤더가 맞는지 확인 
-                       .setFetchSize(10) // 엑셀에서 한번에 읽어들일 데이터 사이즈.
-                       .setCallback(new LoggingExcelReaderCallback()) // fetch 사이즈만큼 읽은 뒤 처리될 callback 
-                       .doStart(); // 실제 수행 START 
-</pre>
-     * @author yunhuihan
-     */
-    public static class ExcelReader 
+    public static class ExcelReader
     {
         XSSFWorkbook wb = null;
         String sheetName = null;

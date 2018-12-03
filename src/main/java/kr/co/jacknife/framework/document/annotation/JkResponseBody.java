@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**************************************************************************
- *  <br>捲土重來</br>
+ *  捲土重來
  *  author : 윤희한
  *  email  : ryys1993@nate.com , scyun2015@gmail.com
  *  Date   : 2018. 10. 2.

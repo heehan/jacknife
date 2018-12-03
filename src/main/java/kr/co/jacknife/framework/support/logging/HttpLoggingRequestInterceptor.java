@@ -6,14 +6,12 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**************************************************************************
- *  <br>捲土重來</br>
+ *  捲土重來
  *  author : 윤희한
  *  email  : ryys1993@nate.com , scyun2015@gmail.com
  *  Date   : 2018. 9. 3.
