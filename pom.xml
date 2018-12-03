@@ -5,19 +5,34 @@
 
     <groupId>kr.co.jacknife</groupId>
     <artifactId>jacknife.framework</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-<!--    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>-->
+    <version>0.0.2-RELEASE</version>
+    <packaging>jar</packaging>
+    <name>jacknife</name>
+    <description>jacknife framework</description>
+    <issueManagement>
+        <url>https://github.com/heehan/jacknife/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>LGPL 3.0 License</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+
+    <url>https://github.com/heehan/jacknife</url>
+    <developers>
+        <developer>
+            <email>scyun2015@gmail.com</email>
+            <name>heehan yun</name>
+        </developer>
+    </developers>
+    <scm>
+        <url>https://github.com/heehan/jacknife</url>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
@@ -30,11 +45,6 @@
         </repository>
     </distributionManagement>
 
-
-    <packaging>jar</packaging>
-
-    <name>jacknife</name>
-    <description>jacknife framework</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -134,10 +144,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-                <!--
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -147,7 +153,6 @@
                         </goals>
                     </execution>
                 </executions>
-                -->
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
